@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>실습 2-5</title>
+  <style>
+    table {
+      border: 1px solid darkgray;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 20px;
+      border: 1px solid darkgray;
+    }
+    caption {
+      caption-side: bottom;
+    }
+    th {
+      background-color: #00c6e4;
+    }
+    tbody th {
+      text-align: left;
+    }
+    th:first-child {
+      text-align: left;
+    }
+    .special {
+      font-weight: bold;
+      background-image: url("table_bg.jpg");
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <caption>2023 국민 독서실태</caption>
+    <thead>
+      <tr>
+        <th>구분</th>
+        <th>성인</th>
+        <th>독서자</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>종이책</th>
+        <td>6.1권</td>
+        <td class="special">11.8권</td>
+      </tr>
+      <tr>
+        <th>전자책</th>
+        <td>1.2권</td>
+        <td>7.1권</td>
+      </tr>
+      <tr>
+        <th>오디오북</th>
+        <td>0.2권</td>
+        <td>5.5권</td>
+      </tr>      
+    </tbody>
+  </table>
+</body>
+</html>
