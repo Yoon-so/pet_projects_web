@@ -1,12 +1,27 @@
+/*Body */
+body {
+    display: grid;
+    grid-template-columns: 220px 1fr 200px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "header header header"
+        "login post ad"
+        "foot foot foot";
+    gap: 15px;
+    margin: 0;
+    min-height: 100vh;
+}
+
+
 /*Header */
 #top_header {
     background-color: #001275;
     color: #ffffff;
-
     display: flex;
     align-items: flex-end;
     padding: 2px;
 
+    grid-area: header;
 }
 #title {
     color: #ebeeff;
@@ -73,7 +88,93 @@ nav {
     color: #ffffff;
 }
 
+/*Aside login*/
+#login {
+    background-color: #001275;
+    color: #ffffff;
+    padding: 10px;
+    width: 200px;
+    flex-shrink: 0;
+    height: auto;
+
+    grid-area: login;
+}
+form {
+    border-radius: 5px;
+    padding: 10px;
+}
+label {
+    display: block;
+}
+input[type="text"],input[type="password"], select {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+input[type="submit"], input[type="button"] {
+    background-color: #ededed;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    width: 87.5px;
+    padding: 5px 20px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    
+}
+
+/*Aside ad */
+#ad {
+    grid-area: ad;
+}
+
+/*Section post*/
+#post {
+    grid-area: post;
+    font-weight: bold;
+}
+.card{
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid #001275;
+    border-radius: 10px;
+    box-shadow: -1px 1px 5px 2px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    margin: 15px;
+}
+.card header {
+    width: 100%;
+    font-size: 20px;
+    margin-bottom: 5px; 
+}
+.card h3 {
+    margin: 0;
+    position: relative;
+}
+.card figure {
+    margin: 0;
+    margin-right: 15px;
+    flex: 0 0 auto;
+}
+.card img {
+    width: 300px;
+    height: auto;
+    display: block;
+}
+.card p {
+  flex: 1;
+  margin: 0;  
+}
+
 /*Footer */
+footer {
+    grid-area: foot;
+}
 #foot {
     background-color: #001275;
     padding: 10px;
@@ -83,7 +184,6 @@ nav {
     list-style: none;
     padding: 0;
     margin: 0;
-    flex-wrap: wrap;
 }
 #foot li:first-child {
     margin-right: auto;
@@ -91,13 +191,6 @@ nav {
 #foot li:not(:first-child) {
     flex: 1;
     text-align: center;
-}
-
-@media (max-width: 768px) {
-    #foot ul {
-        justify-content: flex-start;
-        gap: 20px;
-    }
 }
 #foot li {
     margin-bottom: 8px;
@@ -110,4 +203,11 @@ nav {
 }
 #foot a:hover {
     color: #817ce6;
+}
+@media (max-width: 768px) {
+    #foot ul {
+        justify-content: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
 }
