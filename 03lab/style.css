@@ -1,13 +1,13 @@
 /*Body */
 body {
     display: grid;
-    grid-template-columns: 220px 1fr 200px;
+    grid-template-columns: 220px 1fr 220px;
     grid-template-rows: auto 1fr;
     grid-template-areas: 
         "header header header"
         "login post ad"
         "foot foot foot";
-    gap: 15px;
+    gap: 10px;
     margin: 0;
     min-height: 100vh;
 }
@@ -132,12 +132,28 @@ input[type="submit"], input[type="button"] {
 #ad {
     grid-area: ad;
 }
+#ad article {
+    background-color: rgb(255, 251, 237);
+    border: 2px solid #001275;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 0 10px;
+}
+#ad img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
 
 /*Section post*/
 #post {
     grid-area: post;
     font-weight: bold;
 }
+.accent_info {
+    font-weight: bold;
+}
+
 .card{
     display: flex;
     flex-wrap: wrap;
@@ -162,7 +178,7 @@ input[type="submit"], input[type="button"] {
     flex: 0 0 auto;
 }
 .card img {
-    width: 300px;
+    width: 250px;
     height: auto;
     display: block;
 }
