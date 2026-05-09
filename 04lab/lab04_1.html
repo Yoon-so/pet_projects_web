@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>글자 수 카운터</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .count {
+            color: #666;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        #clearBtn {
+            background-color: rgb(255, 70, 70);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 14px;
+            padding: 8px 14px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>나의 메모</h1>
+    <textarea id="memoText" placeholder="여기에 글을 쓰세요..."></textarea>
+    <div class="count">
+        글자: <span id="charCount">0</span> · 단어: <span id="wordCount">0</span>
+    </div>
+    <button id="clearBtn">지우기</button>
+
+
+    <script>
+        const textarea = document.querySelector('#memoText');
+        const charEl = document.querySelector('#charCount');
+        const wordEl = document.querySelector('#wordCount');
+        const clearBtn = document.querySelector('#clearBtn'); 
+        const countBox = document.querySelector('.count');
+
+        let debounceTimer; //디바운스 타이머 변수
+
+        const updateCounts = (text) => {
+            charEl.textContent = text.length; //글자 수 갱신
+            wordEl.textContent = text.trim() ? text.trim().split(/\s+/).filter(w => w).length : 0; //단어 수 갱신
+            
+            if (text.length >= 200) {
+                countBox.style.color = 'red'; //count 영역의 요소를 빨간색으로 변경
+            } else {
+                countBox.style.color = '#666'; //count 영역의 요소를 기본 색상으로 변경
+            }
+        }
+
+        // TODO 1: 페이지 로드 시 localStorage에서 저장된 글 복원
+        //         힌트: localStorage.getItem('memo'), textarea.value = ...
+
+        const savedMemo = localStorage.getItem('memo'); 
+        if (savedMemo) { //저장된 글이 있으면 복원
+            textarea.value = savedMemo; //텍스트 영역에 복원된 글 설정
+            updateCounts(savedMemo); //글자/단어 수 갱신
+        }
+
+        // TODO 2: textarea의 input 이벤트로 글자/단어 수 갱신 + localStorage 저장
+        //         힌트: text.length (글자 수), text.trim().split(/\s+/).filter(w => w).length (단어 수)
+        
+        
+        textarea.addEventListener('input', () => { //이벤트 리스너 등록 - 글이 입력될 때마다 실행
+            const text = textarea.value; //현재 텍스트 영역의 글 가져오기
+            
+            updateCounts(text); //글자/단어 수 갱신
+
+            clearTimeout(debounceTimer); //이전 타이머 취소
+            debounceTimer = setTimeout(() => { //디바운스 타이머 설정 - 글 입력이 멈춘 후 500ms 후에 실행
+                localStorage.setItem('memo', text); //localStorage에 현재 글 저장
+            }, 500);
+        });
+
+        // TODO 3: 지우기 버튼 클릭 시 textarea 내용과 localStorage 데이터 삭제
+        //         힌트: textarea.value = '', localStorage.removeItem('memo')
+        clearBtn.addEventListener('click', () => { //지우기 버튼 클릭 시 실행
+            textarea.value = ''; //텍스트 영역 비우기
+            localStorage.removeItem('memo'); //localStorage에서 'memo' 키의 데이터 삭제
+            updateCounts(''); //글자/단어 수 갱신 (0으로 설정)
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>북마크 매니저</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .form input {
+            flex: 1;
+            padding: 0.5rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .search {   
+            margin-bottom: 3rem;
+        }
+        .search input { 
+            width: 100%;
+            padding: 0.5rem;
+            box-sizing: border-box;
+        }
+        .category-title { 
+            margin-top: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #a8a8a8;
+            color: #535353;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .name {
+            flex: 1;
+            cursor: pointer;
+            color: #0066cc;
+        }
+
+        .name:hover {
+            text-decoration: underline;
+        }
+
+        .star {
+            cursor: pointer;
+            user-select: none;
+            color: #ccc;
+            font-size: 1.2rem;
+        }
+
+        .star.active {
+            color: gold;
+        }
+
+        .delete-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>나의 북마크</h1>
+    <div class="form">
+        <input type="text" id="nameInput" placeholder="사이트 이름">
+        <input type="url" id="urlInput" placeholder="https://...">
+        <input type="text" id="categoryInput" placeholder="카테고리 (선택)"> 
+        <button id="addBtn">추가</button>
+    </div>
+    <div class="search">
+        <input type="text" id="searchInput" placeholder="검색 (이름 또는 URL)">
+    </div>
+    <ul id="bookmarkList"></ul>
+
+    <script>
+        const nameInput = document.querySelector('#nameInput');
+        const urlInput = document.querySelector('#urlInput');
+        const searchInput = document.querySelector('#searchInput'); 
+        const categoryInput = document.querySelector('#categoryInput');
+        const addBtn = document.querySelector('#addBtn');
+        const list = document.querySelector('#bookmarkList');
+
+        // 데이터 모델: [{ id, name, url, starred }, ...]
+        let bookmarks = [];
+
+        // TODO 1: 페이지 로드 시 localStorage에서 bookmarks 배열 복원 + 렌더링
+        //         힌트: JSON.parse, render() 호출
+        const savedBookmarks = localStorage.getItem('bookmarks'); //localStorage에서 'bookmarks' 키의 데이터 가져오기
+
+        //저장된 데이터가 있으면 bookmarks 배열에 복원
+        if (savedBookmarks) {
+            bookmarks = JSON.parse(savedBookmarks);
+        }
+        render();
+
+        // TODO 2: render() — bookmarks 배열을 화면에 그리기
+        //         힌트: list.innerHTML = bookmarks.map(b => `<li data-id="${b.id}">...</li>`).join('')
+
+        //<li data-id="${b.id}"> 각 북마크 항목(li) 생성 - data-id 속성에는 북마크의 고유 id 설정
+        //<span class="name">${b.name}</span> 북마크 이름 표시
+        //<a href="${b.url}" target="_blank" class="url">${b.url}</a> 북마크 URL 표시 - 클릭 시 새 탭에서 열림
+        //<span class="star ${b.starred ? 'active' : ''}">★</span> 별표 표시 - b.starred 값이 true이면 activate 클래스를 추가하여 활성화 스타일 적용, false이면 빈 문자열이 들어가므로 기본 스타일 유지
+        //<button class="delete-btn">삭제</button> 북마크 삭제 버튼
+
+        function render() {
+            const keyword = searchInput.value.trim().toLowerCase(); //검색어 가져오기 (소문자로 변환)   
+
+            const filtered = bookmarks.filter(b =>
+                b.name.toLowerCase().includes(keyword) || //북마크 이름에 검색어가 포함되어 있는지
+                b.url.toLowerCase().includes(keyword) //북마크 URL에 검색어가 포함되어 있는지
+            );
+
+            const categories = [...new Set(filtered.map(b => b.category || '미분류'))]; //카테고리 목록 생성 - 북마크 배열에서 카테고리만 추출하여 중복 제거 (카테고리가 없는 경우 '미분류'로 처리)
+
+            list.innerHTML = categories.map(category => {
+
+                const categoryBookmarks = filtered
+                    .filter(b => (b.category || '미분류') === category) //현재 카테고리에 속하는 북마크만 필터링
+
+                    //즐겨찾기 우선 정렬
+                    .sort((a, b) => b.starred - a.starred); //카테고리가 같으면 starred 값으로 정렬 (true가 false보다 크므로 true가 먼저 오도록)
+            
+                    return ` 
+                        <h3 class="category-title">${category}</h3>
+
+                        ${categoryBookmarks.map(b => `
+                            <li data-id="${b.id}">
+                                <span class="name">${b.name}</span>
+                                <a href="${b.url}" target="_blank" class="url" style="color: gray; text-decoration: none;">${b.url}</a>
+                                <span class="star ${b.starred ? 'active' : ''}">★</span>
+                                <button class="delete-btn">삭제</button>
+                        </li>
+                        `).join('')}
+                    `; //카테고리 제목과 해당 카테고리에 속하는 북마크 항목들을 HTML 문자열로 생성    
+                }).join(''); //map()으로 생성된 배열을 join('')으로 하나의 문자열로 합침
+        }
+
+        // TODO 3: 추가 버튼 — 이름+URL 받아서 bookmarks에 추가 + 저장 + 렌더링
+        addBtn.addEventListener('click', () => {
+
+            const name = nameInput.value.trim(); //입력된 이름에서 앞뒤 공백 제거
+            let url = urlInput.value.trim(); //입력된 URL에서 앞뒤 공백 제거
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) { //URL이 http:// 또는 https://로 시작하지 않으면
+                url = 'http://' + url; //URL 앞에 http:// 추가
+            }
+
+            if (!name || !url) return; //입력값이 없으면 무시
+
+            const newBookmark = {
+                id: Date.now(), //고유 ID 생성
+                name,
+                url,
+                category: categoryInput.value.trim(),
+                starred: false
+            };
+            bookmarks.push(newBookmark); //배열에 새 북마크 추가
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks)); //localStorage에 저장
+            render(); //화면 갱신
+
+            nameInput.value = ''; //입력창 초기화
+            urlInput.value = '';
+            categoryInput.value = '';
+        });
+        searchInput.addEventListener('input', render); //검색어 입력 시마다 render() 호출하여 화면 갱신
+
+        // TODO 4: 이벤트 위임 — list에 click 1개로 별표 토글 / 삭제 / 사이트명 클릭 시 window.open
+        list.addEventListener('click', (e) => {
+
+            const li = e.target.closest('li'); //클릭된 요소에서 가장 가까운 li 요소 찾기
+            if (!li) return; //li 요소가 아니면 무시
+
+            const id = Number(li.dataset.id); //클릭된 항목의 ID 가져오기
+            const bookmark = bookmarks.find(b => b.id === id); //해당 ID의 북마크 찾기
+
+            if (!bookmark) return; //북마크가 없으면 무시
+
+            if (e.target.classList.contains('star')) { //별표 클릭 시
+                bookmark.starred = !bookmark.starred; //starred 상태 토글
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks)); //변경된 배열 저장
+                render(); //화면 갱신
+            } else if (e.target.classList.contains('delete-btn')) { //삭제 버튼 클릭 시
+                bookmarks = bookmarks.filter(b => b.id !== id); //해당 북마크 제거
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks)); //변경된 배열 저장
+                render(); //화면 갱신
+            } else if (e.target.classList.contains('name')) { //사이트명 클릭 시
+                window.open(bookmark.url, '_blank'); //새 탭에서 URL 열기
+            }
+        });
+    </script>
+</body>
+
+</html>
